@@ -1,8 +1,10 @@
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 
 public class Cluster {
-    private ArrayList<Point> points;
+    private List<Point> points;
     private Point center;
     private int id;
 
@@ -12,8 +14,16 @@ public class Cluster {
         this.id = id;
     }
 
-    public ArrayList<Point> getPoints() {
+    public List<Point> getPoints() {
         return points;
+    }
+
+    public void addPoint(Point point) {
+        points.add(point);
+    }
+
+    public void setRandomCenter() {
+        center = points.get(ThreadLocalRandom.current().nextInt(0, points.size()));
     }
 
     public void setPoints(ArrayList<Point> points) {

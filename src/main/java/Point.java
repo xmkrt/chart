@@ -1,3 +1,5 @@
+import java.util.concurrent.ThreadLocalRandom;
+
 /**
  * Created by marcel on 31.03.2017.
  */
@@ -5,6 +7,12 @@ public class Point {
     private double x;
     private double y;
     private int cluster;
+
+    public Point(double x, double y, int k) {
+        this.x = x;
+        this.y = y;
+        cluster = ThreadLocalRandom.current().nextInt(1, k);
+    }
 
     public Point(double x, double y) {
         this.x = x;
@@ -37,6 +45,15 @@ public class Point {
 
     protected static double distance(Point p, Point center) {
         return Math.sqrt(Math.pow((center.getY() - p.getY()), 2) + Math.pow((center.getX() - p.getX()), 2));
+    }
+
+    @Override
+    public String toString() {
+        return "Point{" +
+                "x=" + x +
+                ", y=" + y +
+                ", cluster=" + cluster +
+                '}';
     }
 
     @Override
