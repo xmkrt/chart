@@ -8,45 +8,45 @@ public class Cluster {
     private Point center;
     private int id;
 
-    public Cluster(int id) {
+    Cluster(int id) {
         this.points = new ArrayList<Point>();
         this.center = null;
         this.id = id;
     }
 
-    public List<Point> getPoints() {
+    List<Point> getPoints() {
         return points;
     }
 
-    public void addPoint(Point point) {
+    void addPoint(Point point) {
         points.add(point);
     }
 
-    public void setRandomCenter() {
+    void setRandomCenter() {
         center = points.get(ThreadLocalRandom.current().nextInt(0, points.size()));
     }
 
-    public void setPoints(ArrayList<Point> points) {
+    void setPoints(ArrayList<Point> points) {
         this.points = points;
     }
 
-    public Point getCenter() {
+    Point getCenter() {
         return center;
     }
 
-    public void setCenter(Point center) {
+    void setCenter(Point center) {
         this.center = center;
     }
 
-    public int getId() {
+    int getId() {
         return id;
     }
 
-    public void setId(int id) {
+    void setId(int id) {
         this.id = id;
     }
 
-    public void clear() {
+    void clear() {
         points.clear();
     }
 

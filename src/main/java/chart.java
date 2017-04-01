@@ -11,14 +11,14 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Pattern;
 
 public class chart {
-    static List<Cluster> clusters = new ArrayList<Cluster>();
-    static List<Point> points = new ArrayList<Point>();
+    private static List<Cluster> clusters = new ArrayList<Cluster>();
+    private static List<Point> points = new ArrayList<Point>();
 
-    static Cluster cluster1 = new Cluster(1);
-    static Cluster cluster2 = new Cluster(2);
-    static Cluster cluster3 = new Cluster(3);
-    static Cluster cluster4 = new Cluster(4);
-    static Cluster cluster5 = new Cluster(5);
+    private static Cluster cluster1 = new Cluster(1);
+    private static Cluster cluster2 = new Cluster(2);
+    private static Cluster cluster3 = new Cluster(3);
+    private static Cluster cluster4 = new Cluster(4);
+    // private static Cluster cluster5 = new Cluster(5);
 
 
     public static void main(String[] args) {
@@ -29,7 +29,7 @@ public class chart {
     }
 
 
-    public static BubbleChart getMyChart() {
+    private static BubbleChart getMyChart() {
         List<String> lines = null;
         try {
             lines = IOUtils.readLines(new FileInputStream("data.txt"));
@@ -63,7 +63,7 @@ public class chart {
         BubbleChart chart = new BubbleChartBuilder().width(800).height(600).title("Viele Punkte mit Cluster").xAxisTitle("X").yAxisTitle("Y").build();
         int i = 1;
 
-        //rumgefummel weil xChart nur arrays mag :(
+        //converting Lists to arrays for xChart
         for (Cluster cluster : clusters) {
             List<Point> points = cluster.getPoints();
             double[] xData = new double[points.size()];
@@ -96,32 +96,23 @@ public class chart {
             point.setCluster(ThreadLocalRandom.current().nextInt(1, clusters.size() + 1));
         }
 
-        addPointsToCluster((ArrayList) points, cluster1, cluster2, cluster3, cluster4);
+        addPointsToCluster((ArrayList<Point>) points, cluster1, cluster2, cluster3, cluster4);
 
         for (Cluster cluster : clusters) {
             cluster.setRandomCenter();
         }
 
         boolean finish = false;
-        int iteration = 0;
-
         // Add in new data, one at a time, recalculating centroids with each new one.
         while (!finish) {
             //Clear cluster state
             clearClusters();
-
             List lastCenters = getCenters(4);
-
             //Assign points to the closer cluster
             assignCluster(4);
-
             //Calculate new centroids.
             calculateCentroids();
-
-            iteration++;
-
             List currentCentroids = getCenters(4);
-
             //Calculates total distance between new and old Centroids
             double distance = 0;
             for (int i = 0; i < lastCenters.size(); i++) {
@@ -164,7 +155,7 @@ public class chart {
     }
 
     private static List getCenters(int k) {
-        List centers = new ArrayList(k);
+        List<Point> centers = new ArrayList<Point>(k);
         for (Cluster cluster : clusters) {
             Point aux = cluster.getCenter();
             Point point = new Point(aux.getX(), aux.getY());

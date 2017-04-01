@@ -14,36 +14,36 @@ public class Point {
         cluster = ThreadLocalRandom.current().nextInt(1, k);
     }
 
-    public Point(double x, double y) {
+    Point(double x, double y) {
         this.x = x;
         this.y = y;
     }
 
-    public void setX(double x) {
+    void setX(double x) {
         this.x = x;
     }
 
-    public void setY(double y) {
+    void setY(double y) {
         this.y = y;
     }
 
-    public void setCluster(int cluster) {
+    void setCluster(int cluster) {
         this.cluster = cluster;
     }
 
-    public double getX() {
+    double getX() {
         return x;
     }
 
-    public double getY() {
+    double getY() {
         return y;
     }
 
-    public int getCluster() {
+    int getCluster() {
         return cluster;
     }
 
-    protected static double distance(Point p, Point center) {
+    static double distance(Point p, Point center) {
         return Math.sqrt(Math.pow((center.getY() - p.getY()), 2) + Math.pow((center.getX() - p.getX()), 2));
     }
 
