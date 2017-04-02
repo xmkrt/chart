@@ -1,14 +1,15 @@
-import org.apache.commons.io.IOUtils;
 import org.knowm.xchart.BubbleChart;
 import org.knowm.xchart.BubbleChartBuilder;
 import org.knowm.xchart.SwingWrapper;
 
-import java.io.FileReader;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Pattern;
+
 
 public class chart {
     private static List<Cluster> clusters = new ArrayList<Cluster>();
@@ -30,12 +31,24 @@ public class chart {
 
 
     private static BubbleChart getMyChart() {
-        List<String> lines = null;
+        List<String> lines = new ArrayList<String>();
+
+        //reading lines with scanner
         try {
-            lines = IOUtils.readLines(new FileReader("data.txt"));
+            Scanner scanner = new Scanner(new File("data.txt"));
+            while (scanner.hasNextLine()) {
+                lines.add(scanner.nextLine());
+            }
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }
+
+        /*try {
+        with Apache IO
+            lines = readLines(new FileReader("data.txt"));
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+        }*/
 
         double[] xData = new double[lines.size()];
         double[] yData = new double[lines.size()];
@@ -55,7 +68,7 @@ public class chart {
 
         BubbleChart chart = new BubbleChartBuilder().width(800).height(600).title("Viele Punkte").xAxisTitle("X").yAxisTitle("Y").build();
 
-        chart.addSeries("lala", xData, yData, bubbleData);
+        chart.addSeries(" ", xData, yData, bubbleData);
         return chart;
     }
 
@@ -63,16 +76,16 @@ public class chart {
         BubbleChart chart = new BubbleChartBuilder().width(800).height(600).title("Viele Punkte mit Cluster").xAxisTitle("X").yAxisTitle("Y").build();
         int i = 1;
 
-        //converting Lists to arrays for xChart
+        //converting to xChart Format
         for (Cluster cluster : clusters) {
             List<Point> points = cluster.getPoints();
-            double[] xData = new double[points.size()];
-            double[] yData = new double[points.size()];
-            double[] bubbleData = new double[points.size()];
+            List<Double> xData = new ArrayList<Double>();
+            List<Double> yData = new ArrayList<Double>();
+            List<Double> bubbleData = new ArrayList<Double>();
             for (int j = 0; j < points.size(); j++) {
-                xData[j] = points.get(j).getX();
-                yData[j] = points.get(j).getY();
-                bubbleData[j] = 5;
+                xData.add(points.get(j).getX());
+                yData.add(points.get(j).getY());
+                bubbleData.add(5.0);
             }
             chart.addSeries("Cluster " + i, xData, yData, bubbleData);
             i++;
@@ -89,7 +102,7 @@ public class chart {
         clusters.add(cluster4);
 
         // set the coordinates for each point from input Data
-        for (int i = 0; i< xData.length; i++) {
+        for (int i = 0; i < xData.length; i++) {
             points.add(new Point(xData[i], yData[i]));
         }
         for (Point point : points) {
@@ -212,6 +225,4 @@ public class chart {
             }
         }
     }
-
-
 }
