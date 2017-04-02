@@ -1,6 +1,8 @@
-import org.knowm.xchart.BubbleChart;
-import org.knowm.xchart.BubbleChartBuilder;
 import org.knowm.xchart.SwingWrapper;
+import org.knowm.xchart.XYChart;
+import org.knowm.xchart.XYChartBuilder;
+import org.knowm.xchart.XYSeries;
+import org.knowm.xchart.style.Styler;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,7 +12,7 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 
 public class chart {
-    static final int n_clusters = 5;
+    static final int n_clusters = 4; // set to 3, 4 or 5
 
     public static void main(String[] args) {
         List<Point> points = new ArrayList<Point>();
@@ -41,9 +43,13 @@ public class chart {
             points.add(new Point(x, y));
         }
 
-        BubbleChart chart = new BubbleChartBuilder().width(800).height(600).title("Viele Punkte").xAxisTitle("X").yAxisTitle("Y").build();
+        XYChart chart = new XYChartBuilder().width(800).height(600).build();
 
-        chart.addSeries(" ", xData, yData, bubbleData);
+        chart.addSeries(" ", xData, yData);
+        chart.getStyler().setDefaultSeriesRenderStyle(XYSeries.XYSeriesRenderStyle.Scatter);
+        chart.getStyler().setChartTitleVisible(false);
+        chart.getStyler().setLegendPosition(Styler.LegendPosition.InsideSW);
+        chart.getStyler().setMarkerSize(8);
 
         Kmeans kmeans = null;
 
@@ -56,9 +62,8 @@ public class chart {
         kmeans.init();
         kmeans.calc();
 
-
-        BubbleChart finishedChart = kmeans.draw();
-        new SwingWrapper<BubbleChart>(chart).displayChart();
-        new SwingWrapper<BubbleChart>(finishedChart).displayChart();
+        XYChart finishedChart = kmeans.drawXY();
+        new SwingWrapper<XYChart>(chart).displayChart();
+        new SwingWrapper<XYChart>(finishedChart).displayChart();
     }
 }

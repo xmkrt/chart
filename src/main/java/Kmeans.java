@@ -1,5 +1,5 @@
-import org.knowm.xchart.BubbleChart;
-import org.knowm.xchart.BubbleChartBuilder;
+import org.knowm.xchart.*;
+import org.knowm.xchart.style.Styler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,13 +76,13 @@ public class Kmeans {
                     break;
             }
         }
-    }
 
-    void calc() {
         for (Cluster cluster : clusters) {
             cluster.setRandomCenter();
         }
+    }
 
+    void calc() {
         boolean finish = false;
 
         while (!finish) {
@@ -91,13 +91,13 @@ public class Kmeans {
             List lastCenters = getCenters(n_clusters);
             //Assign points to the closer cluster
             assignCluster(n_clusters);
-            //Calculate new centroids.
-            calculateCentroids();
-            List currentCentroids = getCenters(n_clusters);
-            //Calculates total distance between new and old Centroids
+            //Calculate new centers
+            calculateCenters();
+            List currentCenters = getCenters(n_clusters);
+            //Calculates total distance between new and old Centers
             double distance = 0;
             for (int i = 0; i < lastCenters.size(); i++) {
-                distance += Point.distance((Point) lastCenters.get(i), (Point) currentCentroids.get(i));
+                distance += Point.distance((Point) lastCenters.get(i), (Point) currentCenters.get(i));
             }
 
             if (distance < 0.1) {
@@ -149,7 +149,7 @@ public class Kmeans {
         }
     }
 
-    private void calculateCentroids() {
+    private void calculateCenters() {
         for (Cluster cluster : clusters) {
             double sumX = 0;
             double sumY = 0;
@@ -161,22 +161,21 @@ public class Kmeans {
                 sumY += point.getY();
             }
 
-            Point centroid = cluster.getCenter();
+            Point center = cluster.getCenter();
             if (n_points < 0) {
                 double newX = sumX / n_points;
                 double newY = sumY / n_points;
-                centroid.setX(newX);
-                centroid.setY(newY);
+                center.setX(newX);
+                center.setY(newY);
             }
         }
     }
 
-
-    BubbleChart draw() {
+    BubbleChart drawBubble() {
         BubbleChart chart = new BubbleChartBuilder().width(800).height(600).title("Viele Punkte mit Cluster").xAxisTitle("X").yAxisTitle("Y").build();
         int i = 1;
 
-        //converting to xChart Format
+        //convert to xChart Format
         for (Cluster cluster : clusters) {
             List<Point> points = cluster.getPoints();
             List<Double> xData = new ArrayList<Double>();
@@ -188,6 +187,29 @@ public class Kmeans {
                 bubbleData.add(5.0);
             }
             chart.addSeries("Cluster " + i, xData, yData, bubbleData);
+            i++;
+        }
+        return chart;
+    }
+
+    XYChart drawXY() {
+        XYChart chart = new XYChartBuilder().width(800).height(600).build();
+        chart.getStyler().setDefaultSeriesRenderStyle(XYSeries.XYSeriesRenderStyle.Scatter);
+        chart.getStyler().setChartTitleVisible(false);
+        chart.getStyler().setLegendPosition(Styler.LegendPosition.InsideSW);
+        chart.getStyler().setMarkerSize(8);
+        int i = 1;
+
+        //convert to xChart Format
+        for (Cluster cluster : clusters) {
+            List<Point> points = cluster.getPoints();
+            List<Double> xData = new ArrayList<Double>();
+            List<Double> yData = new ArrayList<Double>();
+            for (int j = 0; j < points.size(); j++) {
+                xData.add(points.get(j).getX());
+                yData.add(points.get(j).getY());
+            }
+            chart.addSeries("Cluster " + i, xData, yData);
             i++;
         }
         return chart;
