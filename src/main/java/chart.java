@@ -3,7 +3,7 @@ import org.knowm.xchart.BubbleChart;
 import org.knowm.xchart.BubbleChartBuilder;
 import org.knowm.xchart.SwingWrapper;
 
-import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +32,7 @@ public class chart {
     private static BubbleChart getMyChart() {
         List<String> lines = null;
         try {
-            lines = IOUtils.readLines(new FileInputStream("data.txt"));
+            lines = IOUtils.readLines(new FileReader("data.txt"));
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }
@@ -103,7 +103,7 @@ public class chart {
         }
 
         boolean finish = false;
-        // Add in new data, one at a time, recalculating centroids with each new one.
+
         while (!finish) {
             //Clear cluster state
             clearClusters();
@@ -120,10 +120,16 @@ public class chart {
             }
 
             if (distance < 0.1) {
-                // stop when distance between last and newcenters is small
+                // stop when distance between last and new centers is small
                 finish = true;
             }
         }
+
+        for (int i = 0; i < clusters.size(); i++) {
+            System.out.println("Cluster " + (i + 1) + " Center: " + clusters.get(i).getCenter());
+            System.out.println("Points:\n" + clusters.get(i).getPoints());
+        }
+
     }
 
     private static void addPointsToCluster(ArrayList<Point> points, Cluster cluster1, Cluster cluster2, Cluster cluster3, Cluster cluster4) {

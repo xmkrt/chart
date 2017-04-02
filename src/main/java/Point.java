@@ -49,11 +49,7 @@ public class Point {
 
     @Override
     public String toString() {
-        return "Point{" +
-                "x=" + x +
-                ", y=" + y +
-                ", cluster=" + cluster +
-                '}';
+        return x + " | " + y;
     }
 
     @Override
@@ -79,4 +75,6 @@ public class Point {
         result = 31 * result + cluster;
         return result;
     }
+
+
 }
