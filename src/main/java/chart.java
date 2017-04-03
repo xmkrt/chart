@@ -12,58 +12,51 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 
 public class chart {
-    static final int n_clusters = 4; // set to 3, 4 or 5
+    private static final int n_clusters = 5; // set to 3, 4 or 5
+    private static final double threshold = 0.01; // threshold for kmeans
 
     public static void main(String[] args) {
         List<Point> points = new ArrayList<Point>();
-        List<String> lines = new ArrayList<String>();
+        List<Double> xData = new ArrayList<Double>();
+        List<Double> yData = new ArrayList<Double>();
 
-        //reading lines with scanner
+        //read file and add data to lists
         try {
             Scanner scanner = new Scanner(new File("data.txt"));
-            while (scanner.hasNextLine()) {
-                lines.add(scanner.nextLine());
-            }
+            double x, y;
+            while (scanner.hasNext()){
+                x = Double.parseDouble(scanner.next());
+                y = Double.parseDouble(scanner.next());
+                xData.add(x);
+                yData.add(y);
+                points.add(new Point(x,y));            }
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }
 
-        List<Double> xData = new ArrayList<Double>();
-        List<Double> yData = new ArrayList<Double>();
-        List<Integer> bubbleData = new ArrayList<Integer>();
-
-        String[] segs;
-        for (String s : lines) {
-            segs = s.split(Pattern.quote(" "));
-            double x = Double.parseDouble(segs[0]);
-            double y = Double.parseDouble(segs[1]);
-            xData.add(x);
-            yData.add(y);
-            bubbleData.add(5);
-            points.add(new Point(x, y));
+        Kmeans kmeans = null;
+        //make kmeans instance
+        try {
+            kmeans = new Kmeans(points, n_clusters, threshold);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
         }
 
-        XYChart chart = new XYChartBuilder().width(800).height(600).build();
+        //calc
+        kmeans.calc();
 
+        //draw charts
+        new SwingWrapper<XYChart>(getChart(xData,yData)).displayChart();
+        new SwingWrapper<XYChart>(kmeans.drawXY()).displayChart();
+    }
+
+    public static XYChart getChart(List<Double> xData, List<Double> yData){
+        XYChart chart = new XYChartBuilder().width(800).height(600).build();
         chart.addSeries(" ", xData, yData);
         chart.getStyler().setDefaultSeriesRenderStyle(XYSeries.XYSeriesRenderStyle.Scatter);
         chart.getStyler().setChartTitleVisible(false);
         chart.getStyler().setLegendPosition(Styler.LegendPosition.InsideSW);
         chart.getStyler().setMarkerSize(8);
-
-        Kmeans kmeans = null;
-
-        try {
-            kmeans = new Kmeans(points, n_clusters);
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-        }
-
-        kmeans.init();
-        kmeans.calc();
-
-        XYChart finishedChart = kmeans.drawXY();
-        new SwingWrapper<XYChart>(chart).displayChart();
-        new SwingWrapper<XYChart>(finishedChart).displayChart();
+        return chart;
     }
 }
