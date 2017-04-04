@@ -1,4 +1,3 @@
-import com.sun.org.apache.xpath.internal.SourceTree;
 import org.knowm.xchart.*;
 import org.knowm.xchart.style.Styler;
 
@@ -6,12 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-/**
- * Created by marcel on 02.04.2017.
- */
-public class Kmeans {
-
-
+class Kmeans {
     private List<Cluster> clusters = new ArrayList<Cluster>();
     private List<Point> points = new ArrayList<Point>();
 
@@ -21,74 +15,26 @@ public class Kmeans {
     private double threshold;
 
     //make 5 clusters
-    private Cluster cluster1 = new Cluster(1);
-    private Cluster cluster2 = new Cluster(2);
-    private Cluster cluster3 = new Cluster(3);
-    private Cluster cluster4 = new Cluster(4);
-    private Cluster cluster5 = new Cluster(5);
+
 
     //add clusters to list
-    Kmeans(List<Point> points, int n_clusters, double threshold) throws Exception {
+    Kmeans(List<Point> points, int n_clusters, double threshold) {
         this.points = points;
         this.threshold = threshold;
         this.n_clusters = n_clusters;
-        switch (n_clusters) {
-            case 3:
-                clusters.add(cluster1);
-                clusters.add(cluster2);
-                clusters.add(cluster3);
-                break;
-            case 4:
-                clusters.add(cluster1);
-                clusters.add(cluster2);
-                clusters.add(cluster3);
-                clusters.add(cluster4);
-                break;
-            case 5:
-                clusters.add(cluster1);
-                clusters.add(cluster2);
-                clusters.add(cluster3);
-                clusters.add(cluster4);
-                clusters.add(cluster5);
-                break;
-            default:
-                throw new Exception("only 3, 4 or 5 clusters");
+        for (int i = 1; i <= n_clusters; i++) {
+            clusters.add(new Cluster(i));
         }
         //set random clusters for all points
         for (Point point : points) {
             point.setCluster(ThreadLocalRandom.current().nextInt(1, clusters.size() + 1));
-        }
-
-        // add points to clusters
-        for (Point point : points) {
-            switch (point.getCluster()) {
-                case 1:
-                    cluster1.addPoint(point);
-                    break;
-                case 2:
-                    cluster2.addPoint(point);
-                    break;
-                case 3:
-                    cluster3.addPoint(point);
-                    break;
-                case 4:
-                    cluster4.addPoint(point);
-                    break;
-                case 5:
-                    cluster5.addPoint(point);
-                    break;
-                default:
-                    break;
-            }
+            // add points to clusters
+            clusters.get(point.getCluster() - 1).addPoint(point);
         }
 
         for (Cluster cluster : clusters) {
             cluster.setRandomCenter();
         }
-
-    }
-
-    void init() {
 
     }
 
@@ -179,6 +125,7 @@ public class Kmeans {
         }
     }
 
+    //previously used
     BubbleChart drawBubble() {
         BubbleChart chart = new BubbleChartBuilder().width(800).height(600).title("Viele Punkte mit Cluster").xAxisTitle("X").yAxisTitle("Y").build();
         int i = 1;
